@@ -41,3 +41,10 @@ DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node)
 
 	return module_addr;
 }
+
+//implementation of GetNTHeader
+PIMAGE_NT_HEADERS GetNTHeader(PBYTE pBase, PIMAGE_DOS_HEADER pDosHeader)
+{
+	PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)(pBase + pDosHeader->e_lfanew);
+	return pNtHeader;
+}

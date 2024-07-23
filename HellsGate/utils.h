@@ -29,3 +29,11 @@ PLIST_ENTRY GetModuleList(PPEB_LDR_DATA ldr_ptr);
 * Param: PLIST_ENTRY head_node -> the first LIST_ENTRY in InMemoryOrderModuleList
 */
 DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node);
+
+/*
+* Desc: Gets the NT HEADER from the module base
+* Param: PBYTE pBase -> the base address of the module
+* Returns: PIMAGE_NT_HEADERS -> the NT Header struct
+*/
+
+PIMAGE_NT_HEADERS GetNTHeader(PBYTE pBase, PIMAGE_DOS_HEADER pDosHeader);

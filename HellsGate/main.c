@@ -36,11 +36,13 @@ int main(int argc, char* argv[])
 	PPEB_LDR_DATA pLdr = GetLdrAddress(pPeb);
 	PLIST_ENTRY pHeadNode = GetModuleList(pLdr);
 	DWORD_PTR pModuleAddr = GetModuleBaseAddr(TargetDLL, pHeadNode);
+	PBYTE pBase = (PBYTE)pModuleAddr;
 
 	//make sure base address is not NULL
-	if (pModuleAddr == 0)
+	if (pBase == 0 || pBase == NULL)
 	{
-		fprintf(stderr, "[+] Error finding %ls in memory\n", TargetDLL);
+		fprintf(stderr, "[!] Error finding %ls in memory\n", TargetDLL);
+		exit(-1);
 	}
 
 	//output
@@ -48,6 +50,27 @@ int main(int argc, char* argv[])
 	printf("[+] Found PEB_LDR_DATA struct at %p\n", pLdr);
 	printf("[+] Found head of InMemoryOrderModuleList at %p\n", pHeadNode);
 	printf("[+] Found %ls at %x\n", TargetDLL, pModuleAddr);
+
+	//find address of functions we need to detect if hooks are present
+	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pModuleAddr;
+
+	//error handling
+	if (pDosHeader->e_magic != IMAGE_DOS_SIGNATURE)
+	{
+		fprintf(stderr, "[!] Error with casting to IMAGE_DOS_HEADER\n");
+		exit(-1);
+	}
+
+	PIMAGE_NT_HEADERS pNtHeader = GetNTHeader(pBase, pDosHeader);
+	if (pNtHeader->Signature != IMAGE_NT_SIGNATURE)
+	{
+		fprintf(stderr, "[!] Error with getting NT HEADER struct\n");
+		exit(-1);
+	}
+
+	//output
+	printf("[+] Successfully parsed DOS header\n");
+	printf("[+] Successfully parsed NT header\n");
 
 	//for attaching a debugger
 	getchar();
