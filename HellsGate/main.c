@@ -28,5 +28,29 @@ BYTE buf[] =
 //main function
 int main(int argc, char* argv[])
 {
+	//module we want to find in memory C:\Windows\SYSTEM32\ntdll.dll
+	const PWSTR TargetDLL = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
+
+	//perform PEB walking
+	PPEB pPeb = GetPEBAddress();
+	PPEB_LDR_DATA pLdr = GetLdrAddress(pPeb);
+	PLIST_ENTRY pHeadNode = GetModuleList(pLdr);
+	DWORD_PTR pModuleAddr = GetModuleBaseAddr(TargetDLL, pHeadNode);
+
+	//make sure base address is not NULL
+	if (pModuleAddr == 0)
+	{
+		fprintf(stderr, "[+] Error finding %ls in memory\n", TargetDLL);
+	}
+
+	//output
+	printf("[+] Found PEB at %p\n", pPeb);
+	printf("[+] Found PEB_LDR_DATA struct at %p\n", pLdr);
+	printf("[+] Found head of InMemoryOrderModuleList at %p\n", pHeadNode);
+	printf("[+] Found %ls at %x\n", TargetDLL, pModuleAddr);
+
+	//for attaching a debugger
+	getchar();
+
 	return 0;
 }

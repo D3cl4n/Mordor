@@ -17,3 +17,15 @@ PPEB GetPEBAddress();
 * Returns: PPEB_LDR_DATA -> pointer to PEB_LDR_DATA struct
 */
 PPEB_LDR_DATA GetLdrAddress(PPEB peb);
+
+/*
+* Desc: Gets the address of the first entry in InMemoryOrderModuleList
+*/
+PLIST_ENTRY GetModuleList(PPEB_LDR_DATA ldr_ptr);
+
+/*
+* Desc: Gets the base address of a module via PEB walk
+* Param: const PWSTR target_dll -> the name of the module to resolve
+* Param: PLIST_ENTRY head_node -> the first LIST_ENTRY in InMemoryOrderModuleList
+*/
+DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node);
