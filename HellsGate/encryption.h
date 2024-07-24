@@ -1,3 +1,6 @@
+#ifndef ENCRYPTION_H
+#define ENCRYPTIO_H
+
 #include <stdio.h>
 #include <Windows.h>
 
@@ -7,3 +10,12 @@
 * Returns: void
 */
 void XorShellcode(BYTE buf[]);
+
+/*
+* Desc: the djb2 hashing algorithm
+* Param: PBYTE str -> the plaintext to hash
+* Returns: DWORD64 the value of the ciphertext / hash value
+*/
+DWORD64 djb2(PBYTE str);
+
+#endif

@@ -14,3 +14,15 @@ void XorShellcode(BYTE buf[])
 	}
 	printf("[+] Finished decrypting shellcode\n");
 }
+
+//implementation of djb2 hashing algorithm
+DWORD64 djb2(PBYTE str)
+{
+	DWORD64 dwHash = 0x7734773477347734;
+	INT c;
+
+	while (c = *str++)
+		dwHash = ((dwHash << 0x5) + dwHash) + c;
+
+	return dwHash;
+}

@@ -2,6 +2,7 @@
 #include <winternl.h>
 
 #include "utils.h"
+#include "encryption.h"
 
 
 //implementation of GetPEBAddress
@@ -70,7 +71,7 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 	pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
 
 	printf("[+] Finding function addresses and syscall SSNs\n");
-	printf("%x\n", pExportDir->NumberOfFunctions);
+	printf("[+] Number of exported functions %x\n", pExportDir->NumberOfFunctions);
 	for (DWORD i = 0; i < pExportDir->NumberOfFunctions; i++)
 	{
 		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
@@ -79,21 +80,18 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
 		{
 			printf("[+] Hash for %s found extracting SSN...\n", pFunctionName);
+			printf("[+] Function %s at address %p\n", pFunctionName, pFunctionAddr);
 			//extract the syscall SSN
-
+			pVxTableEntry->pAddress = pFunctionAddr;
+			if (*((PBYTE)pFunctionAddr) == 0xb8)
+			{
+				printf("[+] No hooks detected... we have 'mov eax, ssn'\n");
+				pVxTableEntry->wSystemCall = *((PBYTE)pFunctionAddr + 1);
+				printf("[+] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
+				break;
+			}
 		}
 	}
 	return TRUE;
 }
 
-//implementation of djb2 hashing algorithm
-DWORD64 djb2(PBYTE str)
-{
-	DWORD64 dwHash = 0x7734773477347734;
-	INT c;
-
-	while (c = *str++)
-		dwHash = ((dwHash << 0x5) + dwHash) + c;
-
-	return dwHash;
-}

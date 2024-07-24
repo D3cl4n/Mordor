@@ -58,9 +58,3 @@ PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader
 */
 BOOL GetVxTableEntry(PVOID pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry);
 
-/*
-* Desc: the djb2 hashing algorithm
-* Param: PBYTE str -> the plaintext to hash
-* Returns: DWORD64 the value of the ciphertext / hash value
-*/
-DWORD64 djb2(PBYTE str);
