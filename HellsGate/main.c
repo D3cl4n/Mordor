@@ -1,6 +1,7 @@
 //includes
 #include "encryption.h"
 #include "utils.h"
+#include "types.h"
 
 //shellcode to inject encrypted with XOR, key "A"
 BYTE buf[] =
@@ -68,9 +69,14 @@ int main(int argc, char* argv[])
 		exit(-1);
 	}
 
+	PIMAGE_EXPORT_DIRECTORY pImgExportDir = GetImgExportDir(pBase, pNtHeader);
+	struct ExportDirectoryData* pExportData = GetExportData(pBase, pImgExportDir);
+
 	//output
-	printf("[+] Successfully parsed DOS header\n");
-	printf("[+] Successfully parsed NT header\n");
+	printf("[+] Successfully parsed DOS header at address %p\n", pDosHeader);
+	printf("[+] Successfully parsed NT header at address %p\n", pNtHeader);
+	printf("[+] Successfully parsed the export directory at address %p\n", pImgExportDir);
+	printf("[+] Successfully retrieved function names, addresses and ordinals\n");
 
 	//for attaching a debugger
 	getchar();

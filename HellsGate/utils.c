@@ -48,3 +48,23 @@ PIMAGE_NT_HEADERS GetNTHeader(PBYTE pBase, PIMAGE_DOS_HEADER pDosHeader)
 	PIMAGE_NT_HEADERS pNtHeader = (PIMAGE_NT_HEADERS)(pBase + pDosHeader->e_lfanew);
 	return pNtHeader;
 }
+
+//implementation of GetImgExportDir
+PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader)
+{
+	IMAGE_OPTIONAL_HEADER OptionalHeader = pNtHeader->OptionalHeader;
+	PIMAGE_EXPORT_DIRECTORY pImgExportDir = (PIMAGE_EXPORT_DIRECTORY)(pBase + OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_EXPORT].VirtualAddress);
+	
+	return pImgExportDir;
+}
+
+//implementation of GetExportData
+struct ExportDirectoryData* GetExportData(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir)
+{
+	struct ExportDirectoryData Data;
+	Data.pFunctionNameArr = (PDWORD)(pBase + pExportDir->AddressOfNames);
+	Data.pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
+	Data.pFunctionOrdinalArr = (PDWORD)(pBase + pExportDir->AddressOfNameOrdinals);
+
+	return &Data;
+}

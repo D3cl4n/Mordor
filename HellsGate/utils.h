@@ -5,6 +5,8 @@
 #include <winternl.h>
 #include <intrin.h>
 
+#include "types.h"
+
 /*
 * Desc: Gets the address of the Process Environment Block (PEB)
 * Returns: PPEB -> pointer to PEB structure
@@ -37,3 +39,19 @@ DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node);
 */
 
 PIMAGE_NT_HEADERS GetNTHeader(PBYTE pBase, PIMAGE_DOS_HEADER pDosHeader);
+
+/*
+* Desc: Gets the address of the image export directory
+* Param: PBYTE pBase -> base address of the module we are parsing
+* Param: PIMAGE_NT_HEADERS pNtHeader -> NT header struct
+* Returns: PIMAGE_EXPORT_DIRECTORY -> pointer to struct representing export directory
+*/
+PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader);
+
+/*
+* Desc: Populates an ExportDirectory struct with function name, ordinal, address arrays
+* Param: PBYTE pBase -> base address of the module
+* Param: PIMAGE_EXPORT_DIRECTORY pExportDir -> the export directory of the module
+* Returns: ExportDirectoryData -> struct pointer
+*/
+struct ExportDirectoryData* GetExportData(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir);
