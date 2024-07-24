@@ -70,7 +70,6 @@ int main(int argc, char* argv[])
 	}
 
 	PIMAGE_EXPORT_DIRECTORY pImgExportDir = GetImgExportDir(pBase, pNtHeader);
-	struct ExportDirectoryData* pExportData = GetExportData(pBase, pImgExportDir);
 
 	//output
 	printf("[+] Successfully parsed DOS header at address %p\n", pDosHeader);
@@ -88,7 +87,7 @@ int main(int argc, char* argv[])
 	Table.NtProtectVirtualMemory.dwHash = 0x858bcb1046fb6a37;
 	Table.NtWaitForSingleObject.dwHash = 0xc6a2fa174e551bcb;
 
-	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtAllocateVirtualMemory, pExportData))
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtAllocateVirtualMemory))
 	{
 		fprintf(stderr, "[!] Error with GetVxTableEntry...\n");
 		exit(-1);

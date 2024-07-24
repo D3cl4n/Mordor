@@ -58,28 +58,30 @@ PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader
 	return pImgExportDir;
 }
 
-//implementation of GetExportData
-struct ExportDirectoryData* GetExportData(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir)
-{
-	struct ExportDirectoryData Data;
-	Data.pFunctionNameArr = (PDWORD)(pBase + pExportDir->AddressOfNames);
-	Data.pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
-	Data.pFunctionOrdinalArr = (PDWORD)(pBase + pExportDir->AddressOfNameOrdinals);
-
-	return &Data;
-}
-
 //implementation of GetVxTableEntry
-BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry, struct ExportDirectoryData* pData)
+BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry)
 {
+	PDWORD pFunctionNameArr;
+	PWORD pFunctionOrdinalArr;
+	PDWORD pFunctionAddressArr;
+
+	pFunctionNameArr = (PDWORD)(pBase + pExportDir->AddressOfNames);
+	pFunctionOrdinalArr = (PWORD)(pBase + pExportDir->AddressOfNameOrdinals);
+	pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
+
 	printf("[+] Finding function addresses and syscall SSNs\n");
+	printf("%x\n", pExportDir->NumberOfFunctions);
 	for (DWORD i = 0; i < pExportDir->NumberOfFunctions; i++)
 	{
-		puts("here");
-		PCHAR pFunctionName = (PCHAR)(pBase + pData->pFunctionNameArr[i]);
-		puts("here1");
-		PVOID pFunctionAddr = (PVOID)(pBase + pData->pFunctionAddressArr[pData->pFunctionOrdinalArr[i]]);
-		printf("FUNCTION: %s at %p\n", pFunctionName, pFunctionAddr);
+		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
+		PVOID pFunctionAddr = (PVOID)(pBase + pFunctionAddressArr[pFunctionOrdinalArr[i]]);
+
+		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
+		{
+			printf("[+] Hash for %s found extracting SSN...\n", pFunctionName);
+			//extract the syscall SSN
+
+		}
 	}
 	return TRUE;
 }
