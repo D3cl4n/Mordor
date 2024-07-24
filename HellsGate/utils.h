@@ -55,3 +55,20 @@ PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader
 * Returns: ExportDirectoryData -> struct pointer
 */
 struct ExportDirectoryData* GetExportData(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir);
+
+/*
+* Desc: finds the addresses of the syscalls based on djb2 hash matches, then stores the SSNs
+* Param: PVOID pBase -> module base
+* Param: PIMAGE_EXPORT_DIRECTORY pExportDir -> export directory of module
+* Param: PVX_TABLE_ENTRY pVxTableEntry -> address of entry to populate
+* Param: struct ExportDirectoryData* pData -> struct containing pointers to arrays on function info
+* Returns: True on success, False otherwise
+*/
+BOOL GetVxTableEntry(PVOID pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry, struct ExportDirectoryData* pData);
+
+/*
+* Desc: the djb2 hashing algorithm
+* Param: PBYTE str -> the plaintext to hash
+* Returns: DWORD64 the value of the ciphertext / hash value
+*/
+DWORD64 djb2(PBYTE str);

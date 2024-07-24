@@ -68,3 +68,30 @@ struct ExportDirectoryData* GetExportData(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY p
 
 	return &Data;
 }
+
+//implementation of GetVxTableEntry
+BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry, struct ExportDirectoryData* pData)
+{
+	printf("[+] Finding function addresses and syscall SSNs\n");
+	for (DWORD i = 0; i < pExportDir->NumberOfFunctions; i++)
+	{
+		puts("here");
+		PCHAR pFunctionName = (PCHAR)(pBase + pData->pFunctionNameArr[i]);
+		puts("here1");
+		PVOID pFunctionAddr = (PVOID)(pBase + pData->pFunctionAddressArr[pData->pFunctionOrdinalArr[i]]);
+		printf("FUNCTION: %s at %p\n", pFunctionName, pFunctionAddr);
+	}
+	return TRUE;
+}
+
+//implementation of djb2 hashing algorithm
+DWORD64 djb2(PBYTE str)
+{
+	DWORD64 dwHash = 0x7734773477347734;
+	INT c;
+
+	while (c = *str++)
+		dwHash = ((dwHash << 0x5) + dwHash) + c;
+
+	return dwHash;
+}
