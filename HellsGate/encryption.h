@@ -9,7 +9,7 @@
 * Param: BYTE buf[] -> pointer to first byte of an array of BYTE
 * Returns: void
 */
-void XorShellcode(BYTE buf[]);
+void XorShellcode(BYTE buf[], size_t len);
 
 /*
 * Desc: the djb2 hashing algorithm

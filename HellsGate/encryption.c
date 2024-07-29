@@ -1,14 +1,12 @@
 #include "encryption.h"
 
 //implemetation for XorShellcode
-void XorShellcode(BYTE buf[])
+void XorShellcode(BYTE buf[], size_t len)
 {
 	char key[] = "A"; //TODO: change this
 	printf("[+] XOR shellcode with key %s\n", key);
-	size_t length = sizeof(buf);
-	printf("[+] Shellcode length: %zu\n", length);
 
-	for (size_t i = 0; i < (length - 1); i++)
+	for (size_t i = 0; i < (len - 1); i++)
 	{
 		buf[i] = buf[i] ^ key[i % (sizeof(key) - 1)];
 	}
