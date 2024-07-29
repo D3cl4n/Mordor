@@ -8,7 +8,7 @@
 //implementation of GetPEBAddress
 PPEB GetPEBAddress()
 {
-	return (PPEB)__readfsdword(0x30);
+	return (PPEB)__readgsqword(0x60);
 }
 
 //implementation of GetLdrAddress
@@ -72,26 +72,49 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 
 	printf("[+] Finding function addresses and syscall SSNs\n");
 	printf("[+] Number of exported functions %x\n", pExportDir->NumberOfFunctions);
-	for (DWORD i = 0; i < pExportDir->NumberOfFunctions; i++)
+	for (WORD i = 0; i < pExportDir->NumberOfNames; i++)
 	{
 		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
 		PVOID pFunctionAddr = (PVOID)(pBase + pFunctionAddressArr[pFunctionOrdinalArr[i]]);
 
 		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
 		{
+			WORD idx = 0;
 			printf("[+] Hash for %s found extracting SSN...\n", pFunctionName);
 			printf("[+] Function %s at address %p\n", pFunctionName, pFunctionAddr);
 			//extract the syscall SSN
 			pVxTableEntry->pAddress = pFunctionAddr;
-			if (*((PBYTE)pFunctionAddr) == 0xb8)
+			if (*((PBYTE)pFunctionAddr + idx) == 0x4c
+				&& *((PBYTE)pFunctionAddr + 1 + idx) == 0x8b
+				&& *((PBYTE)pFunctionAddr + 2 + idx) == 0xd1
+				&& *((PBYTE)pFunctionAddr + 3 + idx) == 0xb8
+				) 
 			{
 				printf("[+] No hooks detected... we have 'mov eax, ssn'\n");
-				pVxTableEntry->wSystemCall = *((PBYTE)pFunctionAddr + 1);
+				BYTE high = *((PBYTE)pFunctionAddr + 5 + idx);
+				BYTE low = *((PBYTE)pFunctionAddr + 4 + idx);
+				pVxTableEntry->wSystemCall = (high << 8 | low);
 				printf("[+] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
 				break;
 			}
 		}
 	}
 	return TRUE;
+}
+
+//implementation of VxMoveMemory
+PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len) {
+	char* d = dest;
+	const char* s = src;
+	if (d < s)
+		while (len--)
+			*d++ = *s++;
+	else {
+		char* lasts = s + (len - 1);
+		char* lastd = d + (len - 1);
+		while (len--)
+			*lastd-- = *lasts--;
+	}
+	return dest;
 }
 

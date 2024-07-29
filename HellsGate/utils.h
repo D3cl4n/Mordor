@@ -56,5 +56,12 @@ PIMAGE_EXPORT_DIRECTORY GetImgExportDir(PBYTE pBase, PIMAGE_NT_HEADERS pNtHeader
 * Param: struct ExportDirectoryData* pData -> struct containing pointers to arrays on function info
 * Returns: True on success, False otherwise
 */
-BOOL GetVxTableEntry(PVOID pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry);
+BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_ENTRY pVxTableEntry);
+
+/*
+* Desc: Writes memory
+*/
+PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len);
+
+
 
