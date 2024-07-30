@@ -7,6 +7,9 @@ Hell's Gate is a known method of performing direct system calls. Because EDR can
 
 ## Output
 ![image](https://github.com/D3cl4n/Mordor/blob/master/output.png)
+
+The below screenshot shows that the NtAPI functions are not found in the imports of the Mordor.exe file, allowing us to hide better. 
+
 ![image](https://github.com/D3cl4n/Mordor/blob/master/output1.png)
 
 ## Disclaimer
