@@ -7,6 +7,7 @@ Hell's Gate is a known method of performing direct system calls. Because EDR can
 
 ## Output
 ![image](https://github.com/D3cl4n/Mordor/blob/master/output.png)
+![image](https://github.com/D3cl4n/Mordor/blob/master/output1.png)
 
 ## Disclaimer
 I am not responsible for how you use these concepts and this code. Only legal, educational uses are condoned, and this project is purely personal (reflects nothing about my professional life). This project was intended for me to learn, and is open source to try and help others learn as well. 
