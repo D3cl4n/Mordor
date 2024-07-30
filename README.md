@@ -1,5 +1,5 @@
 # Mordor
-![alt text](mordor.jpeg)
+![image](mordor.jpeg)
 Hell's Gate with XOR encryption, performs local shellcode injection via direct syscalls. Includes custom API for functionality related to GetProcAddress and GetModuleHandle.
 
 ## Description
