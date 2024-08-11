@@ -16,7 +16,7 @@ struct ExportDirectoryData {
 //VxTableEntry represents a syscall's information
 typedef struct _VX_TABLE_ENTRY {
 	PVOID   pAddress;             // The address of a syscall function
-	DWORD64 dwHash;               // The hash value of the syscall name
+	DWORD64 dwHash;               // The djb2 hash value of the syscall name
 	WORD    wSystemCall;          // The SSN of the syscall
 } VX_TABLE_ENTRY, * PVX_TABLE_ENTRY;
 
@@ -28,6 +28,5 @@ typedef struct _VX_TABLE {
 	VX_TABLE_ENTRY NtWriteVirtualMemory;
 	VX_TABLE_ENTRY NtWaitForSingleObject;
 } VX_TABLE, * PVX_TABLE;
-
 
 #endif // !TYPES_H

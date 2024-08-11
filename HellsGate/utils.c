@@ -70,8 +70,7 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 	pFunctionOrdinalArr = (PWORD)(pBase + pExportDir->AddressOfNameOrdinals);
 	pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
 
-	printf("[+] Finding function addresses and syscall SSNs\n");
-	printf("[+] Number of exported functions %x\n", pExportDir->NumberOfFunctions);
+	printf("[+] Searching for function hash: %x\n", pVxTableEntry->dwHash);
 	for (WORD i = 0; i < pExportDir->NumberOfNames; i++)
 	{
 		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
@@ -80,21 +79,21 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
 		{
 			WORD idx = 0;
-			printf("[+] Hash for %s found extracting SSN...\n", pFunctionName);
-			printf("[+] Function %s at address %p\n", pFunctionName, pFunctionAddr);
+			printf("\t[*] Hash for %s found extracting SSN\n", pFunctionName);
+			printf("\t[*] Function %s at address %p\n", pFunctionName, pFunctionAddr);
 			//extract the syscall SSN
 			pVxTableEntry->pAddress = pFunctionAddr;
-			if (*((PBYTE)pFunctionAddr + idx) == 0x4c
+			if (*((PBYTE)pFunctionAddr + idx) == 0x4c 
 				&& *((PBYTE)pFunctionAddr + 1 + idx) == 0x8b
 				&& *((PBYTE)pFunctionAddr + 2 + idx) == 0xd1
 				&& *((PBYTE)pFunctionAddr + 3 + idx) == 0xb8
 				) 
 			{
-				printf("[+] No hooks detected... we have 'mov eax, ssn'\n");
+				printf("\t[*] No hooks detected\n");
 				BYTE high = *((PBYTE)pFunctionAddr + 5 + idx);
 				BYTE low = *((PBYTE)pFunctionAddr + 4 + idx);
 				pVxTableEntry->wSystemCall = (high << 8 | low);
-				printf("[+] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
+				printf("\t[*] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
 				break;
 			}
 		}
@@ -117,4 +116,15 @@ PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len) {
 	}
 	return dest;
 }
+
+//macro for printf replacement 
+#define PRINTA( STR, ... )                                                                  \
+    if (1) {                                                                                \
+        LPSTR buf = (LPSTR)HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, 1024 );           \
+        if ( buf != NULL ) {                                                                \
+            int len = wsprintfA( buf, STR, __VA_ARGS__ );                                   \
+            WriteConsoleA( GetStdHandle( STD_OUTPUT_HANDLE ), buf, len, NULL, NULL );       \
+            HeapFree( GetProcessHeap(), 0, buf );                                           \
+        }                                                                                   \
+    }  
 

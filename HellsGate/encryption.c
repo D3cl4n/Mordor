@@ -10,7 +10,7 @@ void XorShellcode(BYTE buf[], size_t len)
 	{
 		buf[i] = buf[i] ^ key[i % (sizeof(key) - 1)];
 	}
-	printf("[+] Finished decrypting shellcode\n");
+	printf("\t[*] Finished decrypting shellcode\n");
 }
 
 //implementation of djb2 hashing algorithm
