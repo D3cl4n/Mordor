@@ -2,18 +2,21 @@
 #include <winternl.h>
 
 #include "utils.h"
+#include "crt.h"
 #include "encryption.h"
 
 
 //implementation of GetPEBAddress
 PPEB GetPEBAddress()
 {
+	PRINTA("Getting PEB address\n");
 	return (PPEB)__readgsqword(0x60);
 }
 
 //implementation of GetLdrAddress
 PPEB_LDR_DATA GetLdrAddress(PPEB peb)
 {
+	PRINTA("Getting LDR address\n");
 	PPEB_LDR_DATA ldr_data_ptr = peb->Ldr;
 	return ldr_data_ptr;
 }
@@ -21,6 +24,7 @@ PPEB_LDR_DATA GetLdrAddress(PPEB peb)
 //implementation of GetModuleList
 PLIST_ENTRY GetModuleList(PPEB_LDR_DATA ldr_ptr)
 {
+	PRINTA("Getting MODULE list\n");
 	PLIST_ENTRY list_ptr = &ldr_ptr->InMemoryOrderModuleList;
 	return list_ptr;
 }
@@ -28,14 +32,15 @@ PLIST_ENTRY GetModuleList(PPEB_LDR_DATA ldr_ptr)
 //implementation of GetModuleBaseAddr
 DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node)
 {
+	wchar_t test[] = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
 	DWORD_PTR module_addr = 0;
 	PLIST_ENTRY temp = head_node->Flink;
 	while (temp != head_node)
 	{
 		PLDR_DATA_TABLE_ENTRY entry = CONTAINING_RECORD(temp, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-		if (wcsncmp(target_dll, entry->FullDllName.Buffer, wcslen(target_dll)) == 0)
-		{
+		if (WCSNCMPA(test, entry->FullDllName.Buffer, wcslen(test)) == 0) { //TODO: fix this comparison not working
 			module_addr = (DWORD_PTR)entry->DllBase;
+			break;  // Exit loop if the module is found
 		}
 		temp = temp->Flink;
 	}
@@ -70,7 +75,7 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 	pFunctionOrdinalArr = (PWORD)(pBase + pExportDir->AddressOfNameOrdinals);
 	pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
 
-	printf("[+] Searching for function hash: %x\n", pVxTableEntry->dwHash);
+	PRINTA("[+] Searching for function hash\n");
 	for (WORD i = 0; i < pExportDir->NumberOfNames; i++)
 	{
 		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
@@ -79,8 +84,8 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
 		{
 			WORD idx = 0;
-			printf("\t[*] Hash for %s found extracting SSN\n", pFunctionName);
-			printf("\t[*] Function %s at address %p\n", pFunctionName, pFunctionAddr);
+			PRINTA("\t[*] Hash for %s found extracting SSN\n", pFunctionName);
+			PRINTA("\t[*] Function %s at address %p\n", pFunctionName, pFunctionAddr);
 			//extract the syscall SSN
 			pVxTableEntry->pAddress = pFunctionAddr;
 			if (*((PBYTE)pFunctionAddr + idx) == 0x4c 
@@ -89,11 +94,11 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 				&& *((PBYTE)pFunctionAddr + 3 + idx) == 0xb8
 				) 
 			{
-				printf("\t[*] No hooks detected\n");
+				PRINTA("\t[*] No hooks detected\n");
 				BYTE high = *((PBYTE)pFunctionAddr + 5 + idx);
 				BYTE low = *((PBYTE)pFunctionAddr + 4 + idx);
 				pVxTableEntry->wSystemCall = (high << 8 | low);
-				printf("\t[*] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
+				PRINTA("\t[*] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
 				break;
 			}
 		}
@@ -117,14 +122,4 @@ PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len) {
 	return dest;
 }
 
-//macro for printf replacement 
-#define PRINTA( STR, ... )                                                                  \
-    if (1) {                                                                                \
-        LPSTR buf = (LPSTR)HeapAlloc( GetProcessHeap(), HEAP_ZERO_MEMORY, 1024 );           \
-        if ( buf != NULL ) {                                                                \
-            int len = wsprintfA( buf, STR, __VA_ARGS__ );                                   \
-            WriteConsoleA( GetStdHandle( STD_OUTPUT_HANDLE ), buf, len, NULL, NULL );       \
-            HeapFree( GetProcessHeap(), 0, buf );                                           \
-        }                                                                                   \
-    }  
 

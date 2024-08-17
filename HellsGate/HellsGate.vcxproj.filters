@@ -24,6 +24,9 @@
     <ClCompile Include="encryption.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="crt.c">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="utils.h">
@@ -33,6 +36,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="types.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="crt.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

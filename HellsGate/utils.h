@@ -7,6 +7,7 @@
 
 #include "types.h"
 
+
 /*
 * Desc: Gets the address of the Process Environment Block (PEB)
 * Returns: PPEB -> pointer to PEB structure
@@ -62,6 +63,4 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 * Desc: Writes memory
 */
 PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len);
-
-
 

@@ -1,16 +1,18 @@
 #include "encryption.h"
+#include "utils.h"
+#include "crt.h"
 
 //implemetation for XorShellcode
 void XorShellcode(BYTE buf[], size_t len)
 {
 	char key[] = "A"; //TODO: change this
-	printf("[+] XOR shellcode with key %s\n", key);
+	PRINTA("[+] XOR shellcode with key %s\n", key);
 
 	for (size_t i = 0; i < (len - 1); i++)
 	{
 		buf[i] = buf[i] ^ key[i % (sizeof(key) - 1)];
 	}
-	printf("\t[*] Finished decrypting shellcode\n");
+	PRINTA("\t[*] Finished decrypting shellcode\n");
 }
 
 //implementation of djb2 hashing algorithm
