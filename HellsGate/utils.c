@@ -9,14 +9,12 @@
 //implementation of GetPEBAddress
 PPEB GetPEBAddress()
 {
-	PRINTA("Getting PEB address\n");
 	return (PPEB)__readgsqword(0x60);
 }
 
 //implementation of GetLdrAddress
 PPEB_LDR_DATA GetLdrAddress(PPEB peb)
 {
-	PRINTA("Getting LDR address\n");
 	PPEB_LDR_DATA ldr_data_ptr = peb->Ldr;
 	return ldr_data_ptr;
 }
@@ -24,21 +22,19 @@ PPEB_LDR_DATA GetLdrAddress(PPEB peb)
 //implementation of GetModuleList
 PLIST_ENTRY GetModuleList(PPEB_LDR_DATA ldr_ptr)
 {
-	PRINTA("Getting MODULE list\n");
 	PLIST_ENTRY list_ptr = &ldr_ptr->InMemoryOrderModuleList;
 	return list_ptr;
 }
 
 //implementation of GetModuleBaseAddr
-DWORD_PTR GetModuleBaseAddr(const PWSTR target_dll, PLIST_ENTRY head_node)
+DWORD_PTR GetModuleBaseAddr(wchar_t target_dll[], PLIST_ENTRY head_node)
 {
-	wchar_t test[] = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
 	DWORD_PTR module_addr = 0;
 	PLIST_ENTRY temp = head_node->Flink;
 	while (temp != head_node)
 	{
 		PLDR_DATA_TABLE_ENTRY entry = CONTAINING_RECORD(temp, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-		if (WCSNCMPA(test, entry->FullDllName.Buffer, wcslen(test)) == 0) { //TODO: fix this comparison not working
+		if (WCSNCMPA(target_dll, entry->FullDllName.Buffer, wcslen(target_dll)) == 0) { //TODO: fix this comparison not working
 			module_addr = (DWORD_PTR)entry->DllBase;
 			break;  // Exit loop if the module is found
 		}

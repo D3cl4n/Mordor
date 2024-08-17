@@ -36,28 +36,7 @@ extern HellDescent();
 //main function
 int main(int argc, char* argv[])
 {
-	//test wcsncmpa
-	wchar_t lhs[] = L"geekforgeeks";
-	wchar_t rhs[] = L"geekGgeek";
-	int result = WCSNCMPA(lhs, rhs, 7);
-	if (result < 0)
-	{
-		PRINTA("%ls precedes %ls\n", lhs, rhs);
-	}
-
-	else if (result > 0)
-	{
-		PRINTA("%ls precedes %ls\n", rhs, lhs);
-	}
-
-	else if (result == 0)
-	{
-		PRINTA("strings are equal\n");
-	}
-
-	//module we want to find in memory C:\Windows\SYSTEM32\ntdll.dll
-	const PWSTR TargetDLL = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
-
+	wchar_t TargetDLL[] = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
 	//perform PEB walking
 	PPEB pPeb = GetPEBAddress();
 	PPEB_LDR_DATA pLdr = GetLdrAddress(pPeb);
