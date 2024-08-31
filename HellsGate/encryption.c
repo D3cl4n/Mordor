@@ -5,7 +5,7 @@
 //implemetation for XorShellcode
 void XorShellcode(BYTE buf[], size_t len)
 {
-	char key[] = "A"; //TODO: change this
+	char key[] = "A";
 	PRINTA("[+] XOR shellcode with key %s\n", key);
 
 	for (size_t i = 0; i < (len - 1); i++)
@@ -18,7 +18,7 @@ void XorShellcode(BYTE buf[], size_t len)
 //implementation of djb2 hashing algorithm
 DWORD64 djb2(PBYTE str)
 {
-	DWORD64 dwHash = 0x7734773477347734;
+	DWORD64 dwHash = 0x1337539; //seed
 	INT c;
 
 	while (c = *str++)
