@@ -18,4 +18,8 @@ void XorShellcode(BYTE buf[], size_t len);
 */
 DWORD64 djb2(PBYTE str);
 
+
+int rc4(BYTE buf[], size_t len);
+
+
 #endif

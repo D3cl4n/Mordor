@@ -29,4 +29,12 @@ typedef struct _VX_TABLE {
 	VX_TABLE_ENTRY NtWaitForSingleObject;
 } VX_TABLE, * PVX_TABLE;
 
+//rc4 context
+typedef struct
+{
+	unsigned int i;
+	unsigned int j;
+	unsigned char S[256];
+} Rc4ctx;
+
 #endif // !TYPES_H
