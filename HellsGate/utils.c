@@ -34,7 +34,7 @@ DWORD_PTR GetModuleBaseAddr(wchar_t target_dll[], PLIST_ENTRY head_node)
 	while (temp != head_node)
 	{
 		PLDR_DATA_TABLE_ENTRY entry = CONTAINING_RECORD(temp, LDR_DATA_TABLE_ENTRY, InMemoryOrderLinks);
-		if (WCSNCMPA(target_dll, entry->FullDllName.Buffer, wcslen(target_dll)) == 0) { //TODO: fix this comparison not working
+		if (WCSNCMPA(target_dll, entry->FullDllName.Buffer, wcslen(target_dll)) == 0) {
 			module_addr = (DWORD_PTR)entry->DllBase;
 			break;  // Exit loop if the module is found
 		}
