@@ -6,13 +6,12 @@
 void XorShellcode(BYTE buf[], size_t len)
 {
 	char key[] = "A";
-	PRINTA("[+] XOR shellcode with key %s\n", key);
 
 	for (size_t i = 0; i < (len - 1); i++)
 	{
 		buf[i] = buf[i] ^ key[i % (sizeof(key) - 1)];
 	}
-	PRINTA("\t[*] Finished decrypting shellcode\n");
+
 }
 
 //implementation of djb2 hashing algorithm

@@ -71,7 +71,6 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 	pFunctionOrdinalArr = (PWORD)(pBase + pExportDir->AddressOfNameOrdinals);
 	pFunctionAddressArr = (PDWORD)(pBase + pExportDir->AddressOfFunctions);
 
-	PRINTA("[+] Searching for function hash\n");
 	for (WORD i = 0; i < pExportDir->NumberOfNames; i++)
 	{
 		PCHAR pFunctionName = (PCHAR)(pBase + pFunctionNameArr[i]);
@@ -80,8 +79,6 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 		if (djb2(pFunctionName) == pVxTableEntry->dwHash)
 		{
 			WORD idx = 0;
-			PRINTA("\t[*] Hash for %s found extracting SSN\n", pFunctionName);
-			PRINTA("\t[*] Function %s at address %p\n", pFunctionName, pFunctionAddr);
 			//extract the syscall SSN
 			pVxTableEntry->pAddress = pFunctionAddr;
 			if (*((PBYTE)pFunctionAddr + idx) == 0x4c 
@@ -90,11 +87,9 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 				&& *((PBYTE)pFunctionAddr + 3 + idx) == 0xb8
 				) 
 			{
-				PRINTA("\t[*] No hooks detected\n");
 				BYTE high = *((PBYTE)pFunctionAddr + 5 + idx);
 				BYTE low = *((PBYTE)pFunctionAddr + 4 + idx);
 				pVxTableEntry->wSystemCall = (high << 8 | low);
-				PRINTA("\t[*] SSN for %s is %x\n", pFunctionName, pVxTableEntry->wSystemCall);
 				break;
 			}
 		}

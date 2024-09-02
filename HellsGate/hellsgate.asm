@@ -2,17 +2,23 @@
 	wSystemCall DWORD 000h
 
 .code 
-	HellsGate PROC
+	FuncY PROC
+		nop
 		mov wSystemCall, 000h
+		nop
 		mov wSystemCall, ecx
+		nop
 		ret
-	HellsGate ENDP
+	FuncY ENDP
 
-	HellDescent PROC
+	FuncX PROC
+		nop
 		mov r10, rcx
+		nop
 		mov eax, wSystemCall
-
+		nop
 		syscall
+		nop
 		ret
-	HellDescent ENDP
+	FuncX ENDP
 end
