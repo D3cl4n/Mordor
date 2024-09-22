@@ -7,6 +7,11 @@
 
 #include "types.h"
 
+/*
+* Desc: Delays the execution of the program and ensures the delay is not sped up
+* Returns: BOOL -> TRUE if delay succeeded, FALSE if it was sped up
+*/
+BOOL DelayExecution();
 
 /*
 * Desc: Gets the address of the Process Environment Block (PEB)

