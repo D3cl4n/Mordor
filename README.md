@@ -7,6 +7,9 @@ Hell's Gate with XOR encryption, performs local shellcode injection via direct s
 ## Description
 Hell's Gate is a known method of performing direct system calls. Because EDR can hook NtAPI functions, and System Service Numbers (SSNs) can change whenever Microsoft wants to change them, dynamically resolving SSNs then performing direct syscalls is a good strategy. We need to find the base address of ntdll.dll in memory, then parse through it to find the addresses of the NtAPI functions needed for local shellcode injection. Once the addresses of these functions are found, we can extract that function's SSN, and setup a syscall. Before the shellcode is injected, it is XOR decrypted, meaning the shellcode will not exist in an unencrypted form on disk, only at runtime. The code is designed to be modular and expandable, `utils.h` details a great API with most of the necessary functionality. 
 
+## Compile Instructions
+You can run `msbuild.exe /p:Configuration=Release /p:Platform=x64` in the directory where the `.sln` file is to compile. If you choose to build it yourself from source, know that several project options have changed such as removal of the C Runtime (CRT) and more. 
+
 ## Output
 ![image](https://github.com/D3cl4n/Mordor/blob/master/output.png)
 
