@@ -37,4 +37,14 @@ typedef struct
 	unsigned char S[256];
 } Rc4ctx;
 
+//all the SSNs needed for local process injection
+typedef struct
+{
+	unsigned int NtAllocateVirtualMemorySSN;
+	unsigned int NtCreateThreadExSSN;
+	unsigned int NtWriteVirtualMemorySSN;
+	unsigned int NtProtectVirtualMemorySSN;
+	unsigned int NtWaitForSingleObjectSSN;
+} UnhookedSSNs;
+
 #endif // !TYPES_H

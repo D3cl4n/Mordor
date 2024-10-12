@@ -69,3 +69,17 @@ BOOL GetVxTableEntry(PBYTE pBase, PIMAGE_EXPORT_DIRECTORY pExportDir, PVX_TABLE_
 */
 PVOID VxMoveMemory(PVOID dest, const PVOID src, SIZE_T len);
 
+/*
+* Unhooks ntdll from a suspended process
+* Param: PYTE pBase -> the base address of ntdll (same across all processes)
+* Returns: void
+*/
+VOID UnhookFromSuspendedProcess(PBYTE pBase);
+
+/*
+* Desc: gets the size of ntdll from the base address
+* Param: PBYTE pBase -> ntdll module base
+* Returns: SIZE_T -> the size of ntdll
+*/
+SIZE_T GetNtdllSize(PBYTE pBase);
+
